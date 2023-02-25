@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:8.0.0'
+    }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.0.0'
+    id 'application'
+    id 'java'
+}
+
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation 'args4j:args4j:2.32'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+mainClassName = 'Solution'
+
+shadowJar {
+    archiveBaseName.set('interview')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+}
