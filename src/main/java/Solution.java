@@ -66,7 +66,7 @@ public class Solution {
             Scanner scanner = new Scanner(inputFile);
             while (scanner.hasNextLine()) {
                 String nextLine = scanner.nextLine();
-                if (Line.checkCorrectness(nextLine)) {
+                if (Line.validateLine(nextLine)) {
                     resultLines.add(Line.fromString(nextLine));
                 }
             }
@@ -133,7 +133,7 @@ public class Solution {
      *      list of pairs of groups that should be merged after processing the lines.
      */
     private void checkForMarkDiffs(Integer groupIndex, Line line, HashMap<Word, Integer> wordsToGroupsMap,
-                                      ArrayList<Pair<Integer, Integer>> groupsToMerge) {
+                                   ArrayList<Pair<Integer, Integer>> groupsToMerge) {
         for (Word word : line.getWords()) {
             if (!word.isEmpty() && wordsToGroupsMap.containsKey(word)) {
                 Integer groupIndexCandidate = wordsToGroupsMap.get(word);
@@ -161,7 +161,7 @@ public class Solution {
      *      index of currently last group.
      */
     private void markWithNewGroup(Line line, HashMap<Word, Integer> wordsToGroupsMap,
-                               ArrayList<Pair<Line, Integer>> markedLines, int lastGroupIndex) {
+                                  ArrayList<Pair<Line, Integer>> markedLines, int lastGroupIndex) {
         markedLines.add(new Pair<>(line, lastGroupIndex + 1));
         for (Word word : line.getWords()) {
             wordsToGroupsMap.put(word, lastGroupIndex + 1);
@@ -180,11 +180,11 @@ public class Solution {
     private void mergeGroups(ArrayList<Pair<Integer, Integer>> groupsToMerge,
                              ArrayList<Pair<Line, Integer>> markedLines) {
         for (Pair<Integer, Integer> pair : groupsToMerge) {
-            Integer groupToMergeIndex = pair.getValue();
-            Integer mergedGroupIndex = pair.getKey();
+            Integer groupToMergeIndex = pair.getSecond();
+            Integer mergedGroupIndex = pair.getFirst();
             for (Pair<Line, Integer> line : markedLines) {
-                if (line.getValue().equals(mergedGroupIndex)) {
-                    line.setValue(groupToMergeIndex);
+                if (line.getSecond().equals(mergedGroupIndex)) {
+                    line.setSecond(groupToMergeIndex);
                 }
             }
         }
@@ -202,13 +202,13 @@ public class Solution {
     private HashMap<Integer, ArrayList<Line>> groupMarkedLines(ArrayList<Pair<Line, Integer>> markedLines) {
         HashMap<Integer, ArrayList<Line>> groups = new HashMap<>();
         for (Pair<Line, Integer> groupedLine : markedLines) {
-            ArrayList<Line> group = groups.get(groupedLine.getValue());
+            ArrayList<Line> group = groups.get(groupedLine.getSecond());
             if (group == null) {
                 ArrayList<Line> newGroup = new ArrayList<>();
-                newGroup.add(groupedLine.getKey());
-                groups.put(groupedLine.getValue(), newGroup);
+                newGroup.add(groupedLine.getFirst());
+                groups.put(groupedLine.getSecond(), newGroup);
             } else {
-                group.add(groupedLine.getKey());
+                group.add(groupedLine.getFirst());
             }
         }
         return groups;

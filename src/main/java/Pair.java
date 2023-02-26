@@ -1,44 +1,33 @@
 /**
  * Typical pair class.
+ * Acts like any other pair, except for equals method,
+ * which for now checks equality only between first elements of two pairs and second elements of them.
  */
-public class Pair<K, V> {
+public class Pair<F, S> {
 
-    private K key;
+    private F first;
 
-    public K getKey() {
-        return key;
+    public F getFirst() {
+        return first;
     }
 
-    public void setKey(K key) {
-        this.key = key;
+    public void setFirst(F first) {
+        this.first = first;
     }
 
-    private V value;
+    private S second;
 
-    public V getValue() {
-        return value;
+    public S getSecond() {
+        return second;
     }
 
-    public void setValue(V value) {
-        this.value = value;
+    public void setSecond(S second) {
+        this.second = second;
     }
 
-    public Pair(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return key + "=" + value;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + (key != null ? key.hashCode() : 0);
-        hash = 31 * hash + (value != null ? value.hashCode() : 0);
-        return hash;
+    public Pair(F first, S second) {
+        this.first = first;
+        this.second = second;
     }
 
     @Override
@@ -46,11 +35,24 @@ public class Pair<K, V> {
         if (this == o) return true;
         if (o instanceof Pair) {
             Pair pair = (Pair) o;
-            if (key != null ? !key.equals(pair.key) : pair.key != null) return false;
-            if (value != null ? !value.equals(pair.value) : pair.value != null) return false;
+            if (first != null ? !first.equals(pair.first) : pair.first != null) return false;
+            if (second != null ? !second.equals(pair.second) : pair.second != null) return false;
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (first != null ? first.hashCode() : 0);
+        hash = 31 * hash + (second != null ? second.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return first + "=" + second;
     }
 }
 
