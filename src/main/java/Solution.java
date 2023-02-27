@@ -18,6 +18,8 @@ public class Solution {
     @Argument(metaVar = "Input file", usage = "Sets input file path", required = true)
     private String inputFilePath;
 
+    private final ArrayList<Pair<Integer, Integer>> groupsToMerge = new ArrayList<>();
+
     /**
      * Main method of the program,
      * parses command line with args4j, reads input file, process given lines and writes them in output file.
@@ -28,7 +30,7 @@ public class Solution {
     public static void main(String[] args) {
         Solution solution = new Solution();
         solution.parseCommandLine(args);
-        ArrayList<Line> lines = solution.readInputFile();
+        HashSet<Line> lines = solution.readInputFile();
         if (lines == null) return;
         ArrayList<Pair<Line, Integer>> markedLines = solution.markLines(lines);
         HashMap<Integer, ArrayList<Line>> groups = solution.groupMarkedLines(markedLines);
@@ -58,16 +60,17 @@ public class Solution {
      *      list of parsed and verified lines of input file,
      *      each of them contains list of words with their position and string value.
      */
-    private ArrayList<Line> readInputFile() {
+    private HashSet<Line> readInputFile() {
         if (inputFilePath == null) return null;
-        ArrayList<Line> resultLines = new ArrayList<>();
+        HashSet<Line> resultLines = new HashSet<>();
         try {
             File inputFile = new File(System.getProperty("user.dir") + "\\" + inputFilePath);
             Scanner scanner = new Scanner(inputFile);
             while (scanner.hasNextLine()) {
                 String nextLine = scanner.nextLine();
-                if (Line.validateLine(nextLine)) {
-                    resultLines.add(Line.fromString(nextLine));
+                Line line = Line.fromString(nextLine);
+                if (Line.validateLine(line)) {
+                    resultLines.add(line);
                 }
             }
             scanner.close();
@@ -76,6 +79,7 @@ public class Solution {
         }
         return resultLines;
     }
+
 
     /**
      * Marks lines with group indexes.
@@ -91,11 +95,10 @@ public class Solution {
      * @return
      *      map, where key is serial index of group and value is a list of lines which belongs to the group.
      */
-    private ArrayList<Pair<Line, Integer>> markLines(ArrayList<Line> lines) {
+    private ArrayList<Pair<Line, Integer>> markLines(HashSet<Line> lines) {
         int lastGroupIndex = 0;
         ArrayList<Pair<Line, Integer>> markedLines = new ArrayList<>();
         HashMap<Word, Integer> wordsToGroupsMap = new HashMap<>();
-        ArrayList<Pair<Integer, Integer>> groupsToMerge = new ArrayList<>();
         outerLoop:
         for (Line line : lines) {
             for (Word word : line.getWords()) {
@@ -112,7 +115,6 @@ public class Solution {
             markWithNewGroup(line, wordsToGroupsMap, markedLines, lastGroupIndex);
             lastGroupIndex++;
         }
-        mergeGroups(groupsToMerge, markedLines);
         return markedLines;
     }
 
@@ -174,19 +176,18 @@ public class Solution {
      * @param groupsToMerge
      *      list of pairs of groups that should be merged.
      *
-     * @param markedLines
-     *      list of processed lines.
+     * @param groups
+     *      list of formed groups.
      */
     private void mergeGroups(ArrayList<Pair<Integer, Integer>> groupsToMerge,
-                             ArrayList<Pair<Line, Integer>> markedLines) {
+                             HashMap<Integer, ArrayList<Line>> groups) {
         for (Pair<Integer, Integer> pair : groupsToMerge) {
             Integer groupToMergeIndex = pair.getSecond();
             Integer mergedGroupIndex = pair.getFirst();
-            for (Pair<Line, Integer> line : markedLines) {
-                if (line.getSecond().equals(mergedGroupIndex)) {
-                    line.setSecond(groupToMergeIndex);
-                }
-            }
+            ArrayList<Line> groupToMerge = groups.get(groupToMergeIndex);
+            ArrayList<Line> mergedGroup = groups.get(mergedGroupIndex);
+            groupToMerge.addAll(mergedGroup);
+            mergedGroup.clear();
         }
     }
 
@@ -211,6 +212,7 @@ public class Solution {
                 group.add(groupedLine.getFirst());
             }
         }
+        mergeGroups(groupsToMerge, groups);
         return groups;
     }
 

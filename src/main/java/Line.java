@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Class that represents a line of input file.
@@ -75,10 +74,11 @@ public class Line {
      * @return
      *      true if line matches pattern and false if it's not.
      */
-    public static boolean validateLine(String line) {
-        String regex = "^([\"]\\d*[\"][;])*[\"]\\d*[\"]$";
-        Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(line).matches();
+    public static boolean validateLine(Line line) {
+        for (Word word : line.getWords()) {
+            if(!word.isValid()) return false;
+        }
+        return true;
     }
 
     /**
@@ -122,6 +122,7 @@ public class Line {
         for (Word word : words) {
             result.append(word.toString()).append(";");
         }
+        if(result.length() == 0) return result.toString();
         return result.substring(0, result.length() - 1);
     }
 }

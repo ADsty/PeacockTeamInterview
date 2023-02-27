@@ -58,7 +58,12 @@ public class Word {
      *      true if value matches empty value and false if it's not.
      */
     public boolean isEmpty() {
-        return value.equals("\"\"");
+        return value.equals("\"\"") || value.isEmpty();
+    }
+
+    public boolean isValid() {
+        if (isEmpty()) return true;
+        return !value.substring(1, value.length() - 1).contains("\"");
     }
 
     /**
