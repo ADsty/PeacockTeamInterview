@@ -62,7 +62,6 @@ public class Word {
     }
 
     public boolean isValid() {
-        if (isEmpty()) return true;
         return !value.substring(1, value.length() - 1).contains("\"");
     }
 

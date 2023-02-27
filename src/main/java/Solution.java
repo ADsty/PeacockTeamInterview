@@ -18,6 +18,9 @@ public class Solution {
     @Argument(metaVar = "Input file", usage = "Sets input file path", required = true)
     private String inputFilePath;
 
+    /**
+     * List of pairs of groups, where second one should be merged in first one.
+     */
     private final ArrayList<Pair<Integer, Integer>> groupsToMerge = new ArrayList<>();
 
     /**
@@ -171,7 +174,9 @@ public class Solution {
     }
 
     /**
-     * Replaces group index of lines of second in pair groups for group index of first in pair groups.
+     * Method takes pairs of groups that were marked to be merged
+     * and merge content of second in pair group in first group
+     * second group is cleared afterwards.
      *
      * @param groupsToMerge
      *      list of pairs of groups that should be merged.

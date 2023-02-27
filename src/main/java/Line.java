@@ -67,6 +67,7 @@ public class Line {
     /**
      * Method to check if given line matches required pattern.
      * The pattern is "some digit";"some digit";..."some digit"
+     * Some of the values can be empty as "", or completely empty string.
      *
      * @param line
      *      is string line that needs validation.
@@ -76,7 +77,7 @@ public class Line {
      */
     public static boolean validateLine(Line line) {
         for (Word word : line.getWords()) {
-            if(!word.isValid()) return false;
+            if(!word.isEmpty() && !word.isValid()) return false;
         }
         return true;
     }
